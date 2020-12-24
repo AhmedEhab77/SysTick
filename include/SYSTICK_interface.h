@@ -73,4 +73,12 @@ u32    MSysTick_U32GetRemainingTicksToInterruptFunction(void);
 /**	Arguments		: void                                                  **/
 /**	Functionality	: Function to get remaining counts to reach zero        **/
 /*****************************************************************************/
+void   MSysTick_VidSartSystick(u32 Copy_u32Ticks);
+/*****************************************************************************/
+/*****************************************************************************/
+/**	Function Name	: MSysTick_VidStartSystick        .                      **/
+/**	Return Type		: void					   		   		                **/
+/**	Arguments		: void                                                  **/
+/**	Functionality	: Function to start SysTick              	            **/
+/*****************************************************************************/
 #endif
