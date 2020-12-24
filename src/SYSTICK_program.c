@@ -14,7 +14,10 @@
 static   void (*Gpfunc) (void)=NULL;
 /*****************************************************************/
 /*********************SOFTWARE GLOBAL FLAG************************/
-static u8 Sys_u8IntervalFlag=0;
+static volatile u8 Sys_u8IntervalFlag=0;
+/*****************************************************************/
+/*********************GLOBAL VARIABLES************************/
+static  volatile u8 Loc_u8Temp=0;
 /*****************************************************************/
 
 void   MSysTick_VidInit(void)
@@ -59,6 +62,8 @@ void   MSysTick_VidSetBusyWaitDelay_ms(u32 Copy_u32Ticks)
 
 void   MSysTick_VidSetIntervalSingle(u32 Copy_u32Ticks,void (*Lpfunc)(void))
 {
+	/*****************MAKE VALUE = 0 *****************************/
+	Sys -> VALUE = 0;
 	/*****************LOAD DESIRED TICKS AT LOAD REG ***************/
 	Sys -> LOAD = Copy_u32Ticks;
     /****************START THE SYSTICK COUNT************************/
@@ -98,9 +103,18 @@ void   MSysTick_VidStopSystick(void)
 	Sys -> LOAD =0;
 	Sys -> VALUE =0;
 }
+void   MSysTick_VidSartSystick(u32 Copy_u32Ticks)
+{
+
+	/*****************LOAD DESIRED TICKS AT LOAD REG ***************/
+    Sys -> LOAD = Copy_u32Ticks;
+	Sys -> VALUE =0;
+	 /****************START THE SYSTICK COUNT*************************/
+	SET_BIT(Sys -> CTRL,0);
+}
 
 
-u32  MSYSTICK_U32GetCountedTicks(void)
+u32  MSysTick_U32GetCountedTicks(void)
 {
 	u32 Copy_u32ReturnValue=0;
 	Copy_u32ReturnValue= ((Sys -> LOAD) - (Sys -> VALUE));
@@ -108,7 +122,7 @@ u32  MSYSTICK_U32GetCountedTicks(void)
 }
 
 
-u32  MSYSTICK_U32GetRemainingTicksToInterruptFunction(void)
+u32  MSysTick_U32GetRemainingTicksToInterruptFunction(void)
 {
 	u32 Copy_u32ReturnValue=0;
 	Copy_u32ReturnValue= (Sys -> VALUE);
@@ -129,7 +143,7 @@ void SysTick_Handler(void)
 		/*****************CALLBACK FUNCTION NOTIFICATION*************/
 		Gpfunc();	
 		/****************CLEARING FLAG BY READING ONLY THE FLAG**************************/
-		u8 Loc_u8Temp = (GET_BIT(Sys -> CTRL,16));
+		 Loc_u8Temp = (GET_BIT(Sys -> CTRL,16));
 	}
 	else if (Sys_u8IntervalFlag == 1)
 	{
